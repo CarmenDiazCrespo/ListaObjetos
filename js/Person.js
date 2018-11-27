@@ -9,3 +9,4 @@ Person.prototype.toString = function personToString(){
 	var retorno = "Persona: " + this.name + " " + this.surname + ". ";
 	return retorno;
 }
+

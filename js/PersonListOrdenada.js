@@ -1,4 +1,3 @@
-
 //Excepciones de Lista Generales
 
 function MyListException() {
@@ -59,16 +58,7 @@ function Lista (size = 5){
             throw new FullListException();
         }
         _list.push(elem); //push pone el elemento en el último lugar que este libre
-        return this.tam();
-    }
-    this.addAt=function (elem,index){
-        if(this.isFull()){
-            throw new FullListException();
-        }
-        if(index>size){
-            throw "Indice fuera de límite";
-        }
-        _list.splice(index-1,0,elem); //Cambia el contenido de un array eliminando elementos existentes y/o agregando nuevos elementos.
+        _list.sort(); //Lo ordeno
         return this.tam();
     }
     function get(index){
@@ -138,25 +128,6 @@ function Lista (size = 5){
         }
         return _list.splice(index-1, 1);
     }
-    this.removeElement=function (elem){
-        var found=false;
-        var i=0;
-        while(i<this.size && !found){
-            if(_list[i]===elem){
-                found=true; //si lo encuentra se lo pasamos a el método remove
-                remove(i+1);
-            }
-            i++;
-        }
-        return found;
-    }
-    this.set=function (elem, index){
-        var result;
-        if(index>this.tam()){
-            throw new IndexOutOfBounds();
-        }
-        return _list.splice(index-1,1,elem);
-    }
 }
 Lista.prototype = {};
 Lista.prototype.constructor = Lista;
@@ -174,14 +145,35 @@ PersonList.prototype.constructor = PersonList;
 
 PersonList.prototype.add = function (elem){
     if(!(elem instanceof Person)){
-		throw new InvalidValueException(elem);
-	}
-	if (!this.isFull()){
-		list.push(elem);
-	} else {
-		throw new FullListException();
-	}
-	return this.size();
+        throw new InvalidValueException(elem);
+    }
+    if (this.isFull()){
+        throw new FullListException();
+    }
+    if(this.isEmpty()){
+        _list[0]=elem;
+        return _list.length;
+    }
+    var i=0;
+    var found=false;
+    while(i<=_list.length-1 && !found){
+        if((list[i].surname.localeCompare(elem.surname)) != -1){
+            if((list[i].surname.localeCompare(elem.surname)) == 0){
+                if((list[i].name.localeCompare(elem.name)) != -1){
+                    found=true;
+                }else{
+                    i++;
+                }
+            }
+            else if((list[i].surname.localeCompare(elem.surname)) == 1){
+                found=true;
+            }
+        }else{
+            i++;
+        }
+    }
+    _list.splice(i, 0, elem);
+    return _list.length;
 	 
 } 
 
@@ -238,7 +230,6 @@ function testlist(){
         for (var i=0; i<personlist.capacity(); i++){
             console.log("Nº de elementos: " + personlist.add(new Person("Persona nº",""+i*10)));
         }
-        //personlist.add(new Person("Persona","Personez")); //It will generate an exception.
     } catch (err) {
         console.log(err);
     }
@@ -250,8 +241,7 @@ function testlist(){
     /*console.log ("The element removed: " + personlist.remove(personlist,5));
     console.log("El elemento:" +personlist.removeElement(personlist,10));
     console.log(personlist.set(5,5));	 	
-    clear(personlist);
-    console.log(personlist.addAt(5,2));*/
+    clear(personlist);*/
     
     console.log ("The list: " + personlist.toString());	 	
 
